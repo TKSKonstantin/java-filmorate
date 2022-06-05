@@ -17,7 +17,7 @@ public class FilmController {
     private final HashMap<Integer, Film> listFilms = new HashMap<>();
 
     @PostMapping
-    private Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@RequestBody Film film) {
         new ValidatorFilm(film).generationException();
         log.info("Добавление нового фильма");
         listFilms.put(film.getId(), film);
@@ -25,7 +25,7 @@ public class FilmController {
     }
 
     @PatchMapping
-    private Film updateFilm(@RequestBody Film film, @RequestParam(required = false) String id) {
+    public Film updateFilm(@RequestBody Film film, @RequestParam(required = false) String id) {
         new ValidatorFilm(film).generationException();
         if (id.equals("null")) {
             throw new ValidationException("Не передан ID фильма", id);
@@ -40,7 +40,7 @@ public class FilmController {
 
     @ResponseBody
     @GetMapping
-    private List<Film> returnListFilms() {
+    public List<Film> returnListFilms() {
         log.info("Возвращение списка фильмов");
         return new ArrayList<>(listFilms.values());
     }
