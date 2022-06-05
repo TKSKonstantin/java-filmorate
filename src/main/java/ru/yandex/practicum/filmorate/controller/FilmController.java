@@ -19,6 +19,7 @@ public class FilmController {
     @PostMapping
     private Film addFilm(@RequestBody Film film) {
         new ValidatorFilm(film).generationException();
+        log.info("Добавление нового фильма");
         listFilms.put(film.getId(), film);
         return listFilms.get(film.getId());
     }
@@ -29,6 +30,7 @@ public class FilmController {
         if (id.equals("null")) {
             throw new ValidationException("Не передан ID фильма", id);
         } else if (listFilms.containsKey(Integer.parseInt(id))) {
+            log.info("Обновление списка фильмов по Id");
             listFilms.put(Integer.parseInt(id), film);
         } else {
             throw new ValidationException("Введен не верный формат или фильма с данным ID нет, вы ввели");
@@ -39,7 +41,7 @@ public class FilmController {
     @ResponseBody
     @GetMapping
     private List<Film> returnListFilms() {
-        log.info("Я ТУТ");
+        log.info("Возвращение списка фильмов");
         return new ArrayList<>(listFilms.values());
     }
 }
