@@ -14,30 +14,30 @@ public class ValidatorUser {
     }
 
     public void generationException(){
+        replacingTheNameWithLogin();
         calculationMailException();
         calculationLoginException();
-        replacingTheNameWithLogin();
         calculationDateOfBerthException();
     }
 
     private void calculationMailException(){
         if(user.getEmail().isEmpty() || !user.getEmail().contains("@")){
-            log.warn("Не верный формат адреса почты, вы ввели{}",user.getEmail());
-            throw new ValidationException("электронная почта не может быть пустой и должна содержать символ @");
+            log.warn("Не верный формат адреса почты, вы ввели {}",user.getEmail());
+            throw new ValidationException("The email cannot be empty and must contain the character @");
         }
     }
 
     private void calculationLoginException(){
-        if(user.getLogin().isEmpty() || !user.getLogin().contains(" ")){
-            log.warn("Не верный формат логина, вы ввели{}",user.getLogin());
-            throw new ValidationException("логин не может быть пустым и содержать пробелы");
+        if(user.getLogin().isEmpty() || user.getLogin().contains(" ")){
+            log.warn("Не верный формат логина, вы ввели {}",user.getLogin());
+            throw new ValidationException("The login cannot be empty and contain spaces");
         }
     }
 
     private void replacingTheNameWithLogin(){
-        if(user.getName().isEmpty()){
+        if(user.getName()==null){
             log.info("имя для отображения может быть пустым" +
-                    " — в таком случае будет использован логин{}",user.getLogin());
+                    " — в таком случае будет использован логин {}",user.getLogin());
             user.setName(user.getLogin());
         }
     }
@@ -46,7 +46,7 @@ public class ValidatorUser {
         if(user.getBirthday().isAfter(LocalDate.now())){
             log.warn("Сейчас {}, дата рождения не может быть в будущем," +
                     " введена дата {}",LocalDate.now(),user.getBirthday());
-            throw new ValidationException("дата рождения не может быть в будущем");
+            throw new ValidationException("The date of birth cannot be in the future");
         }
     }
 }
