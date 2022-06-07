@@ -3,7 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import ru.yandex.practicum.filmorate.model.ValidatorUser;
 
 import java.util.ArrayList;
@@ -21,27 +26,23 @@ public class UserController {
         new ValidatorUser(user).generationException();
         log.info("Добавление нового пользователя");
         listUsers.put(user.getId(), user);
-        return listUsers.get(user.getId());
+        return user;
     }
 
-    @PatchMapping
-   public User updateUser(@RequestBody User user, @RequestParam(required = false) String id) {
+    @PutMapping
+    public User updateUser(@RequestBody User user) {
         new ValidatorUser(user).generationException();
-        if (id.equals("null")) {
+        if (user.getId() == null || user.getId() <= 0) {
             log.warn("ID пустой");
-            throw new ValidationException("Не передан ID пользователя", id);
-        } else if (listUsers.containsKey(Integer.parseInt(id))) {
-            log.info("Изменение информации о пользователе");
-            listUsers.put(Integer.parseInt(id), user);
-        } else {
-            log.warn("Не верный формат ID или пользователя с таким ID нет, указано{}",id);
-            throw new ValidationException("Введен не верный формат или пользователь с таким ID не найден");
+            throw new ValidationException("Не передан ID пользователя");
         }
+        log.info("Изменение информации о пользователе");
+        listUsers.put(user.getId(), user);
         return listUsers.get(user.getId());
     }
 
     @GetMapping
-    public List<User> returnListUser(){
+    public List<User> returnListUser() {
         log.info("Возврат списка пользователей");
         return new ArrayList<>(listUsers.values());
     }

@@ -3,7 +3,13 @@ package ru.yandex.practicum.filmorate.controller;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ru.yandex.practicum.filmorate.model.ValidatorFilm;
 
 import java.util.ArrayList;
@@ -21,20 +27,17 @@ public class FilmController {
         new ValidatorFilm(film).generationException();
         log.info("Добавление нового фильма");
         listFilms.put(film.getId(), film);
-        return listFilms.get(film.getId());
+        return film;
     }
 
-    @PatchMapping
-    public Film updateFilm(@RequestBody Film film, @RequestParam(required = false) String id) {
+    @PutMapping
+    public Film updateFilm(@RequestBody Film film) {
         new ValidatorFilm(film).generationException();
-        if (id.equals("null")) {
-            throw new ValidationException("Не передан ID фильма", id);
-        } else if (listFilms.containsKey(Integer.parseInt(id))) {
-            log.info("Обновление списка фильмов по Id");
-            listFilms.put(Integer.parseInt(id), film);
-        } else {
-            throw new ValidationException("Введен не верный формат или фильма с данным ID нет, вы ввели");
+        if (film.getId() == null || film.getId() <= 0) {
+            throw new ValidationException("Не передан ID фильма");
         }
+        log.info("Обновление списка фильмов по Id");
+        listFilms.put(film.getId(), film);
         return listFilms.get(film.getId());
     }
 
