@@ -17,7 +17,7 @@ public class UserController {
     private final HashMap<Integer, User> listUsers = new HashMap<>();
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
+    public User createUser(@RequestBody User user) {
         new ValidatorUser(user).generationException();
         log.info("Добавление нового пользователя");
         listUsers.put(user.getId(), user);

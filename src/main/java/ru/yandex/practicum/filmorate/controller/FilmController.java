@@ -17,7 +17,7 @@ public class FilmController {
     private final HashMap<Integer, Film> listFilms = new HashMap<>();
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public Film createFilm(@RequestBody Film film) {
         new ValidatorFilm(film).generationException();
         log.info("Добавление нового фильма");
         listFilms.put(film.getId(), film);

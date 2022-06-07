@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
+import java.time.Duration;
 import java.time.LocalDate;
 
 @Slf4j
@@ -21,14 +22,14 @@ public class ValidatorFilm {
     }
 
     private void creatingDurationException() {
-        if (!film.getDuration().isPositive()) {
+        if (film.getDuration().toMinutes()<= Duration.ofMinutes(0).toMinutes()) {
             log.warn("Введено отрицательное значение продолжительности фильма {}",film.getDuration());
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
     }
 
     private void checkingTheMovieName() {
-        if (film.getName().isEmpty()) {
+        if (film.getName().isBlank()) {
             log.warn("Ввели не верный формат-пустое значение");
             throw new ValidationException("Название не может быть пустым");
         }
