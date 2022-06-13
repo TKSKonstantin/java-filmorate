@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+
 import lombok.extern.slf4j.Slf4j;
+
 import ru.yandex.practicum.filmorate.model.Film;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +21,8 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController {
     private final HashMap<Integer, Film> listFilms = new HashMap<>();
-    ValidatorFilm validatorFilm=new ValidatorFilm();
+    private final ValidatorFilm validatorFilm = new ValidatorFilm();
+
     @PostMapping
     public Film createFilm(@RequestBody Film film) {
         validatorFilm.generationException(film);
@@ -26,6 +30,7 @@ public class FilmController {
         listFilms.put(film.getId(), film);
         return film;
     }
+
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         validatorFilm.generationException(film);
