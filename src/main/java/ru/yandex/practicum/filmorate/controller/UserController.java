@@ -1,52 +1,74 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-
 import ru.yandex.practicum.filmorate.model.ValidatorUser;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    private final HashMap<Integer, User> listUsers = new HashMap<>();
+    private final UserService userService;
+    private final UserStorage inMemoryUserStorage;
     private final ValidatorUser validatorUser = new ValidatorUser();
+
+    @GetMapping("{id}")
+    public User getUserId(@PathVariable Integer id) {
+        return inMemoryUserStorage.searchUsers(id).orElseThrow(NotFoundObjectException::new);
+    }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
         validatorUser.generationException(user);
-        log.info("Добавление нового пользователя");
-        listUsers.put(user.getId(), user);
+        inMemoryUserStorage.addUser(user);
         return user;
     }
 
     @PutMapping
     public User updateUser(@RequestBody User user) {
         validatorUser.generationException(user);
-        if (user.getId() == null || user.getId() <= 0) {
-            log.warn("ID пустой");
-            throw new ValidationException("Не передан ID пользователя");
-        }
-        log.info("Изменение информации о пользователе");
-        listUsers.put(user.getId(), user);
-        return listUsers.get(user.getId());
+        inMemoryUserStorage.updateUser(user);
+        return user;
+    }
+
+    @DeleteMapping
+    public void deleteUser(@RequestBody User user) {
+        inMemoryUserStorage.deleteUser(user);
     }
 
     @GetMapping
-    public List<User> returnListUser() {
-        log.info("Возврат списка пользователей");
-        return new ArrayList<>(listUsers.values());
+    public Collection<User> returnListUser() {
+        return inMemoryUserStorage.returnListUser();
+    }
+
+    @GetMapping("{id}/friends")
+    public List<User> returnListOfFriends(@PathVariable Integer id) {
+        return userService.returnListOfFriends(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public List<User> returnSharedFriendsList(@PathVariable Integer id, @PathVariable Integer otherId) {
+        return userService.returnSharedFriendsList(id, otherId);
+    }
+
+    @PutMapping("{id}/friends/{friendId}")
+    public void addFriendsList(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.addFriendsList(id, friendId);
+    }
+
+    @DeleteMapping("{id}/friends/{friendId}")
+    public void deleteFriendsList(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.deleteFriendsList(id, friendId);
     }
 }
