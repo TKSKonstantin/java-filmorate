@@ -17,7 +17,7 @@ public class FilmService {
 
     public void addLike(Integer filmId, Integer userId) {
         if (filmStorage.searchFilm(filmId).isEmpty() || inMemoryUserStorage.searchUsers(userId).isEmpty()) {
-            throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
+            throw new NotFoundObjectException();
         } else {
             filmStorage.searchFilm(filmId).get().getFilmLikeUserId().add(userId);
         }
@@ -25,17 +25,17 @@ public class FilmService {
 
     public void deleteLike(Integer filmId, Integer userId) {
         if (filmStorage.searchFilm(filmId).isEmpty() || inMemoryUserStorage.searchUsers(userId).isEmpty()) {
-            throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
+            throw new NotFoundObjectException();
         } else {
             filmStorage.searchFilm(filmId).get().getFilmLikeUserId().remove(userId);
         }
     }
 
-   public List<Film> returnListOfMovieRatings(int counter) {
-        if (filmStorage.getSortFilms().size()<counter) {
+    public List<Film> returnListOfMovieRatings(int counter) {
+        if (filmStorage.getSortFilms().size() < counter) {
             return filmStorage.getSortFilms();
         } else {
-           return  filmStorage.getSortFilms().subList(0,counter);
+            return filmStorage.getSortFilms().subList(0, counter);
         }
     }
 }

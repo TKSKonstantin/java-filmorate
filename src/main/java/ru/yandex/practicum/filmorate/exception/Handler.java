@@ -15,14 +15,14 @@ public class Handler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> validatorHandler(ValidationException ex) {
-        log.info("обработчик BAD_REQUEST");
+        log.info("код ошибки 400");
         return Map.of("error", ex.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> NotFoundObject(NotFoundObjectException ex) {
-        log.info("обработчик NOT_FOUND");
-        return Map.of("error","объект не найден");
+        log.info("код ошибки 404");
+        return Map.of("error", "объект не найден");
     }
 }
