@@ -16,7 +16,7 @@ public class FilmService {
     private final InMemoryUserStorage inMemoryUserStorage;
 
     public void addLike(Integer filmId, Integer userId) {
-        if (filmStorage.searchFilm(filmId).isPresent() || inMemoryUserStorage.searchUsers(userId).isPresent()) {
+        if (filmStorage.searchFilm(filmId).isEmpty() || inMemoryUserStorage.searchUsers(userId).isEmpty()) {
             throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
         } else {
             filmStorage.searchFilm(filmId).get().getFilmLikeUserId().add(userId);
@@ -24,7 +24,7 @@ public class FilmService {
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        if (filmStorage.searchFilm(filmId).isPresent() || inMemoryUserStorage.searchUsers(userId).isPresent()) {
+        if (filmStorage.searchFilm(filmId).isEmpty() || inMemoryUserStorage.searchUsers(userId).isEmpty()) {
             throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
         } else {
             filmStorage.searchFilm(filmId).get().getFilmLikeUserId().remove(userId);

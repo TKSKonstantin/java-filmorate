@@ -8,20 +8,16 @@ import java.util.Set;
 
 @Data
 public class Film {
-    private final Integer id = setId();
+    private Integer id;
     private final String name;
     private final String description;
     private final LocalDate releaseDate;
     private final int duration;
-    private Set<Integer> filmLikeUserId=new HashSet<>();
-    private int ratingFilm=0;
-    private static Integer idCreate = 0;
-    private static Integer setId() {
-        return ++idCreate;
-    }
+    private Set<Integer> filmLikeUserId = new HashSet<>();
+    private Integer ratingFilm = 0;
 
-    private void counterRatingFilm(){
-        if(!filmLikeUserId.isEmpty()){
+    public void counterRatingFilm() {
+        if (!filmLikeUserId.isEmpty()) {
             ratingFilm = filmLikeUserId.size();
         }
     }

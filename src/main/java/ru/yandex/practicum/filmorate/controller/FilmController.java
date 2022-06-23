@@ -53,12 +53,12 @@ public class FilmController {
         inMemoryFilmStorage.deleteFilm(film);
     }
 
-    @PutMapping("{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         filmService.addLike(id, userId);
     }
 
-    @DeleteMapping("{id}/like/{userId}")
+    @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
         filmService.deleteLike(id, userId);
     }

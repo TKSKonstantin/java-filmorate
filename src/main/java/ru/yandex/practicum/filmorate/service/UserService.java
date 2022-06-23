@@ -15,7 +15,7 @@ public class UserService {
     private final InMemoryUserStorage userStorage;
 
    public void addFriendsList(Integer userId, Integer friendsId) {
-        if (userStorage.searchUsers(userId).isPresent() || userStorage.searchUsers(friendsId).isPresent()) {
+        if (userStorage.searchUsers(userId).isEmpty() || userStorage.searchUsers(friendsId).isEmpty()) {
             throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
         } else {
             userStorage.searchUsers(userId).get().addFriendsId(friendsId);
@@ -24,7 +24,7 @@ public class UserService {
     }
 
    public void deleteFriendsList(Integer userId, Integer friendsId) {
-        if (userStorage.searchUsers(userId).isPresent() || userStorage.searchUsers(friendsId).isPresent()) {
+        if (userStorage.searchUsers(userId).isEmpty() || userStorage.searchUsers(friendsId).isEmpty()) {
             throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
         } else {
             userStorage.searchUsers(userId).get().deleteFriendsId(friendsId);
@@ -38,9 +38,9 @@ public class UserService {
 
     public List<User> returnSharedFriendsList(Integer userId, Integer otherId) {
         List<User> user=new ArrayList<>();
-        if (userStorage.searchUsers(userId).isPresent() || userStorage.searchUsers(otherId).isPresent()) {
+        if (userStorage.searchUsers(userId).isEmpty() && userStorage.searchUsers(otherId).isEmpty()) {
             throw new NotFoundObjectException();//бросить в параметр ошибку 404-объект не найден
-        } else {
+        } else if(userStorage.searchUsers(userId).isPresent() && userStorage.searchUsers(otherId).isPresent()){
             for (Integer idUser : userStorage.searchUsers(userId).get().getFriendsId()) {
                 if(userStorage.searchUsers(otherId).get().getFriendsId().contains(idUser)) {
                     user.add(userStorage.getUsers().get(idUser));

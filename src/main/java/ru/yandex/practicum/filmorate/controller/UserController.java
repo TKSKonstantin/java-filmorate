@@ -23,7 +23,7 @@ public class UserController {
     private final UserStorage inMemoryUserStorage;
     private final ValidatorUser validatorUser = new ValidatorUser();
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public User getUserId(@PathVariable Integer id) {
         return inMemoryUserStorage.searchUsers(id).orElseThrow(NotFoundObjectException::new);
     }
@@ -52,22 +52,22 @@ public class UserController {
         return inMemoryUserStorage.returnListUser();
     }
 
-    @GetMapping("{id}/friends")
+    @GetMapping("/{id}/friends")
     public List<User> returnListOfFriends(@PathVariable Integer id) {
         return userService.returnListOfFriends(id);
     }
 
-    @GetMapping("{id}/friends/common/{otherId}")
+    @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> returnSharedFriendsList(@PathVariable Integer id, @PathVariable Integer otherId) {
         return userService.returnSharedFriendsList(id, otherId);
     }
 
-    @PutMapping("{id}/friends/{friendId}")
+    @PutMapping("/{id}/friends/{friendId}")
     public void addFriendsList(@PathVariable Integer id, @PathVariable Integer friendId) {
         userService.addFriendsList(id, friendId);
     }
 
-    @DeleteMapping("{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriendsList(@PathVariable Integer id, @PathVariable Integer friendId) {
         userService.deleteFriendsList(id, friendId);
     }
