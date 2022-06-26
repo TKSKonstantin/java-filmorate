@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import ru.yandex.practicum.filmorate.model.ValidatorUser;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,36 +18,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final UserStorage inMemoryUserStorage;
-    private final ValidatorUser validatorUser = new ValidatorUser();
 
     @GetMapping("/{id}")
     public User getUserId(@PathVariable Integer id) {
-        return inMemoryUserStorage.searchUsers(id).orElseThrow(NotFoundObjectException::new);
+        return userService.searchUsers(id).orElseThrow(NotFoundObjectException::new);
     }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        validatorUser.generationException(user);
-        inMemoryUserStorage.addUser(user);
+        userService.addUser(user);
         return user;
     }
 
     @PutMapping
     public User updateUser(@RequestBody User user) {
-        validatorUser.generationException(user);
-        inMemoryUserStorage.updateUser(user);
+        userService.updateUser(user);
         return user;
     }
 
     @DeleteMapping
     public void deleteUser(@RequestBody User user) {
-        inMemoryUserStorage.deleteUser(user);
+        userService.deleteUser(user);
     }
 
     @GetMapping
     public Collection<User> returnListUser() {
-        return inMemoryUserStorage.returnListUser();
+        return userService.returnListUser();
     }
 
     @GetMapping("/{id}/friends")

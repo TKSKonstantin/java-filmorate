@@ -1,18 +1,17 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
-@Data
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    private final HashMap<Integer, Film> films;
+    private final HashMap<Integer, Film> films=new HashMap<>();
     private static Integer idCreate = 0;
 
     private static Integer setId() {
@@ -32,6 +31,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         } else if (films.containsKey(film.getId())) {
             log.info("Обновление списка фильмов по Id");
             films.put(film.getId(), film);
+        } else {
+            log.warn("Фильма с данным ID нет");
+            throw new NotFoundObjectException();
         }
     }
 
@@ -40,19 +42,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Optional<Film> searchFilm(Integer filmId) {
-        log.info("dВОЗВРАТ ДАННОГО фильма {}", films.get(filmId));
+        log.info("Возврат данного фильма {}", films.get(filmId));
         return Optional.ofNullable(films.get(filmId));
     }
 
     public List<Film> getSortFilms() {
-        List<Film> film = new ArrayList<>();
-        for (Map.Entry<Integer, Film> filmId : films.entrySet()) {
-            filmId.getValue().counterRatingFilm();
-            film.add(filmId.getValue());
-        }
-        film.sort((a, b) -> b.getRatingFilm() - a.getRatingFilm());
-        log.info("отсортирован фильм {}", film);
-        return film;
+        films.keySet().stream().map(films::get).forEach(Film::counterRatingFilm);
+        return films.keySet().stream()
+                .map(films::get)
+                .sorted((a, b) -> b.getRatingFilm() - a.getRatingFilm())
+                .collect(Collectors.toList());
     }
 
     public Collection<Film> returnListFilm() {

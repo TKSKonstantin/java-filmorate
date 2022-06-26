@@ -9,19 +9,19 @@ import java.util.Set;
 
 @Data
 public class User {
+    @NonNull
+    private String name;
     private final String email;
     private final String login;
     private final LocalDate birthday;
-    @NonNull
-    private String name;
     private Integer id;
-    private final Set<Integer> friendsId=new HashSet<>();
+    private final Set<Integer> friendsId = new HashSet<>();
 
-    public void addFriendsId(Integer id){
+    public void addFriendsId(Integer id) {
         friendsId.add(id);
     }
 
-    public void deleteFriendsId(Integer id){
+    public void deleteFriendsId(Integer id) {
         friendsId.remove(id);
     }
 }

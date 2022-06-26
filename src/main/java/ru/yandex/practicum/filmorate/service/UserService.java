@@ -4,15 +4,19 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.ValidatorUser;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Data
 public class UserService {
     private final InMemoryUserStorage userStorage;
+    private final ValidatorUser validatorUser;
 
     public void addFriendsList(Integer userId, Integer friendsId) {
         if (userStorage.searchUsers(userId).isEmpty() || userStorage.searchUsers(friendsId).isEmpty()) {
@@ -33,20 +37,42 @@ public class UserService {
     }
 
     public List<User> returnListOfFriends(Integer userId) {
-        return userStorage.getListFriends(userStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new).getFriendsId());//бросить в параметр ошибку 404-объект не найден
+        return userStorage.getListFriends(userStorage.searchUsers(userId)
+                .orElseThrow(NotFoundObjectException::new).getFriendsId());
     }
 
     public List<User> returnSharedFriendsList(Integer userId, Integer otherId) {
-        List<User> user = new ArrayList<>();
+        ArrayList<User> user = new ArrayList<>();
         if (userStorage.searchUsers(userId).isEmpty() && userStorage.searchUsers(otherId).isEmpty()) {
             throw new NotFoundObjectException();
         } else if (userStorage.searchUsers(userId).isPresent() && userStorage.searchUsers(otherId).isPresent()) {
-            for (Integer idUser : userStorage.searchUsers(userId).get().getFriendsId()) {
-                if (userStorage.searchUsers(otherId).get().getFriendsId().contains(idUser)) {
-                    user.add(userStorage.getUsers().get(idUser));
-                }
-            }
+            userStorage.searchUsers(userId).get().getFriendsId().stream()
+                    .filter(userStorage.searchUsers(otherId).get().getFriendsId()::contains)
+                    .map(userStorage::returnList)
+                    .forEach(user::add);
         }
         return user;
+    }
+
+    public void addUser(User user) {
+        validatorUser.generationException(user);
+        userStorage.addUser(user);
+    }
+
+    public void updateUser(User user) {
+        validatorUser.generationException(user);
+        userStorage.updateUser(user);
+    }
+
+    public void deleteUser(User user) {
+        userStorage.deleteUser(user);
+    }
+
+    public Optional<User> searchUsers(Integer userId) {
+        return userStorage.searchUsers(userId);
+    }
+
+    public Collection<User> returnListUser() {
+        return userStorage.returnListUser();
     }
 }
