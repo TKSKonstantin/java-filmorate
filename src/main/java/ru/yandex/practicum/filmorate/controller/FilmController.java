@@ -21,7 +21,7 @@ public class FilmController {
     private final FilmService filmService;
 
     @GetMapping("{id}")
-    public Film getUserId(@PathVariable Integer id) {
+    Film getUserId(@PathVariable Integer id) {
         return filmService.searchFilm(id).orElseThrow(NotFoundObjectException::new);
     }
 

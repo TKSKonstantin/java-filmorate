@@ -1,19 +1,19 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.ValidatorUser;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-@Data
+@RequiredArgsConstructor
 public class UserService {
     private final InMemoryUserStorage userStorage;
     private final ValidatorUser validatorUser;
@@ -42,16 +42,14 @@ public class UserService {
     }
 
     public List<User> returnSharedFriendsList(Integer userId, Integer otherId) {
-        ArrayList<User> user = new ArrayList<>();
         if (userStorage.searchUsers(userId).isEmpty() && userStorage.searchUsers(otherId).isEmpty()) {
             throw new NotFoundObjectException();
-        } else if (userStorage.searchUsers(userId).isPresent() && userStorage.searchUsers(otherId).isPresent()) {
-            userStorage.searchUsers(userId).get().getFriendsId().stream()
+        } else {
+            return userStorage.searchUsers(userId).get().getFriendsId().stream()
                     .filter(userStorage.searchUsers(otherId).get().getFriendsId()::contains)
                     .map(userStorage::returnList)
-                    .forEach(user::add);
+                    .collect(Collectors.toList());
         }
-        return user;
     }
 
     public void addUser(User user) {
