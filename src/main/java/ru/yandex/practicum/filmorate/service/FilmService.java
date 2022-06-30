@@ -20,19 +20,17 @@ public class FilmService {
     private final ValidatorFilm validatorFilm;
 
     public void addLike(Integer filmId, Integer userId) {
-        if (filmStorage.searchFilm(filmId).isEmpty() || inMemoryUserStorage.searchUsers(userId).isEmpty()) {
-            throw new NotFoundObjectException();
-        } else {
-            filmStorage.searchFilm(filmId).get().getFilmLikeUserId().add(userId);
-        }
+        filmStorage.searchFilm(filmId)
+                .orElseThrow(NotFoundObjectException::new)
+                .getFilmLikeUserId()
+                .add(inMemoryUserStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new).getId());
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        if (filmStorage.searchFilm(filmId).isEmpty() || inMemoryUserStorage.searchUsers(userId).isEmpty()) {
-            throw new NotFoundObjectException();
-        } else {
-            filmStorage.searchFilm(filmId).get().getFilmLikeUserId().remove(userId);
-        }
+            filmStorage.searchFilm(filmId)
+                    .orElseThrow(NotFoundObjectException::new)
+                    .getFilmLikeUserId()
+                    .remove(inMemoryUserStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new).getId());
     }
 
     public List<Film> returnListOfMovieRatings(int counter) {

@@ -19,21 +19,20 @@ public class UserService {
     private final ValidatorUser validatorUser;
 
     public void addFriendsList(Integer userId, Integer friendsId) {
-        if (userStorage.searchUsers(userId).isEmpty() || userStorage.searchUsers(friendsId).isEmpty()) {
-            throw new NotFoundObjectException();
-        } else {
-            userStorage.searchUsers(userId).get().addFriendsId(friendsId);
-            userStorage.searchUsers(friendsId).get().addFriendsId(userId);
-        }
+        userStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new)
+                .addFriendsId(userStorage.searchUsers(friendsId).orElseThrow(NotFoundObjectException::new).getId());
+        userStorage.searchUsers(friendsId).orElseThrow(NotFoundObjectException::new)
+                .addFriendsId(userStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new).getId());
     }
 
     public void deleteFriendsList(Integer userId, Integer friendsId) {
-        if (userStorage.searchUsers(userId).isEmpty() || userStorage.searchUsers(friendsId).isEmpty()) {
-            throw new NotFoundObjectException();
-        } else {
-            userStorage.searchUsers(userId).get().deleteFriendsId(friendsId);
-            userStorage.searchUsers(friendsId).get().deleteFriendsId(userId);
-        }
+        userStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new)
+                .deleteFriendsId(userStorage.searchUsers(friendsId)
+                        .orElseThrow(NotFoundObjectException::new).getId());
+
+        userStorage.searchUsers(friendsId).orElseThrow(NotFoundObjectException::new)
+                .deleteFriendsId(userStorage.searchUsers(userId)
+                        .orElseThrow(NotFoundObjectException::new).getId());
     }
 
     public List<User> returnListOfFriends(Integer userId) {
@@ -42,14 +41,11 @@ public class UserService {
     }
 
     public List<User> returnSharedFriendsList(Integer userId, Integer otherId) {
-        if (userStorage.searchUsers(userId).isEmpty() && userStorage.searchUsers(otherId).isEmpty()) {
-            throw new NotFoundObjectException();
-        } else {
-            return userStorage.searchUsers(userId).get().getFriendsId().stream()
-                    .filter(userStorage.searchUsers(otherId).get().getFriendsId()::contains)
-                    .map(userStorage::returnList)
-                    .collect(Collectors.toList());
-        }
+        return userStorage.searchUsers(userId).orElseThrow(NotFoundObjectException::new).getFriendsId().stream()
+                .filter(userStorage.searchUsers(otherId)
+                        .orElseThrow(NotFoundObjectException::new).getFriendsId()::contains)
+                .map(userStorage::returnList)
+                .collect(Collectors.toList());
     }
 
     public void addUser(User user) {
