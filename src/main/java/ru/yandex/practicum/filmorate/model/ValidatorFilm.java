@@ -2,10 +2,11 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
-
+@Component
 @Slf4j
 public class ValidatorFilm {
     public void generationException(Film film) {
